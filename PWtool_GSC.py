@@ -33,19 +33,11 @@ df, file_sha = load_github_data()
 
 
 st.subheader(" Lanes ")
-col1, col2, col3 = st.columns([1, 1, 1])
-with col1:
-    enable_L1 = st.checkbox ("Lane1_EN", value= True)
-    enable_L2 = st.checkbox ("Lane2_EN", value= True)
-    enable_L3 = st.checkbox ("Lane3_EN", value= True)
-    enable_L4 = st.checkbox ("Lane4_EN", value= True)
-    st.rerun()
-with col2:
-    pass
-with col3:
-    pass
 
-
+enable_L1 = st.checkbox ("Lane1_EN", value= True)
+enable_L2 = st.checkbox ("Lane2_EN", value= True)
+enable_L3 = st.checkbox ("Lane3_EN", value= True)
+enable_L4 = st.checkbox ("Lane4_EN", value= True)
 
 st.divider()
 # 3. Display the Data
