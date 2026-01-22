@@ -6,31 +6,39 @@ import io
 
 st.markdown("""
     <style>
-    /* 1. Force the parent container to stay in 'Row' mode on mobile */
+    /* 1. Force Horizontal Layout */
     [data-testid="stHorizontalBlock"] {
         display: flex !important;
         flex-direction: row !important;
         flex-wrap: nowrap !important;
         align-items: center !important;
-        gap: 0.3rem !important; /* Tiny gap between columns */
+        gap: 0.1rem !important;
     }
 
-    /* 2. Force the columns to NOT stack and NOT have a minimum width */
-    [data-testid="column"] {
-        min-width: 0px !important;
-        flex-grow: 1 !important;
-        flex-shrink: 1 !important;
+    /* 2. Target specific columns by their weight */
+    /* This targets the skinny columns (Checkboxes) */
+    [data-testid="column"]:has(input[type="checkbox"]) {
+        flex: 0 0 auto !important;
+        width: 35px !important; /* Forces the column to be exactly this wide */
     }
 
-    /* 3. Make text inputs take up their full allotted space */
-    div[data-testid="stTextInput"] {
-        width: 100% !important;
+    /* This targets the wider columns (Text Inputs) */
+    [data-testid="column"]:has(div[data-testid="stTextInput"]) {
+        flex: 1 1 auto !important; /* Takes up all remaining space */
     }
 
-    /* 4. Kill the checkbox label space that pushes things off-screen */
-    [data-testid="stCheckbox"] label {
-        width: fit-content !important;
-        margin-right: -15px !important;
+    /* 3. Remove internal padding from checkboxes */
+    [data-testid="stCheckbox"] {
+        width: 35px !important;
+    }
+    
+    [data-testid="stCheckbox"] > label {
+        margin-right: -25px !important; /* Pulls the next column in closer */
+    }
+
+    /* 4. Shrink the text input padding to save more pixels */
+    .stTextInput > div > div > input {
+        padding: 5px !important;
     }
     </style>
     """, unsafe_allow_html=True)
