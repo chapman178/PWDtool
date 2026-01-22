@@ -42,39 +42,54 @@ import io
 #     }
 #     </style>
 #     """, unsafe_allow_html=True)
+
+
+# Set up the page
+st.set_page_config(page_title="PWD Tool", layout="wide")
+
 st.markdown("""
     <style>
-    /* 1. Force the page to use all horizontal space */
-    .block-container { padding: 1rem 0.5rem !important; }
-
-    /* 2. Force Lanes to stay horizontal on mobile */
+    /* Force columns to stay horizontal on mobile */
     [data-testid="stHorizontalBlock"] {
         display: flex !important;
         flex-direction: row !important;
         flex-wrap: nowrap !important;
         align-items: center !important;
-        gap: 0.2rem !important;
+        gap: 0.5rem !important;
     }
 
-    /* 3. Make Checkbox columns shrink to fit only the box */
-    [data-testid="column"]:has(input[type="checkbox"]) {
-        flex: 0 0 35px !important;
-        min-width: 35px !important;
+    /* Set specific widths for the lane columns */
+    /* This targets the 1st and 3rd columns in the lane rows */
+    [data-testid="column"]:nth-of-type(1), 
+    [data-testid="column"]:nth-of-type(3) {
+        min-width: 40px !important;
+        max-width: 60px !important;
+        flex: 0 0 auto !important;
     }
 
-    /* 4. Make Text Input columns take the remaining space */
-    [data-testid="column"]:has(div[data-testid="stTextInput"]) {
+    /* This targets the middle column (The Text Input) */
+    [data-testid="column"]:nth-of-type(2) {
         flex: 1 1 auto !important;
         min-width: 0px !important;
     }
 
-    /* 5. Clean up the 'ghost' space after checkboxes */
-    [data-testid="stCheckbox"] label { display: none !important; }
+    /* Fix the disappearance on PC: Ensure checkbox container has width */
+    .stCheckbox {
+        width: 100% !important;
+    }
+    
+    /* Hide the 'ghost' labels to pull elements closer */
+    .stCheckbox label span {
+        display: none !important;
+    }
+    
+    /* Shrink the padding inside text inputs for mobile */
+    .stTextInput input {
+        padding: 8px !important;
+    }
     </style>
     """, unsafe_allow_html=True)
 
-# Set up the page
-st.set_page_config(page_title="PWD Tool", layout="wide")
 st.title("Pinewood Derby, Pack 159")
 
 
