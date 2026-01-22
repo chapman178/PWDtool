@@ -6,33 +6,31 @@ import io
 
 st.markdown("""
     <style>
-    /* 1. Reduce the gap between columns */
+    /* 1. Force the parent container to stay in 'Row' mode on mobile */
+    [data-testid="stHorizontalBlock"] {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        gap: 0.3rem !important; /* Tiny gap between columns */
+    }
+
+    /* 2. Force the columns to NOT stack and NOT have a minimum width */
     [data-testid="column"] {
-        width: min-content !important;
-        flex-basis: auto !important;
         min-width: 0px !important;
-    }
-    
-    /* 2. Shrink the gap between elements (checkboxes/inputs) */
-    [data-testid="stVerticalBlock"] > div {
-        gap: 0.2rem !important;
+        flex-grow: 1 !important;
+        flex-shrink: 1 !important;
     }
 
-    /* 3. Remove padding from the main container */
-    .block-container {
-        padding-top: 1rem !important;
-        padding-bottom: 0rem !important;
-        padding-left: 0.5rem !important;
-        padding-right: 0.5rem !important;
+    /* 3. Make text inputs take up their full allotted space */
+    div[data-testid="stTextInput"] {
+        width: 100% !important;
     }
 
-    /* 4. Force Checkboxes to occupy almost zero extra width */
-    [data-testid="stCheckbox"] {
+    /* 4. Kill the checkbox label space that pushes things off-screen */
+    [data-testid="stCheckbox"] label {
         width: fit-content !important;
-    }
-    [data-testid="stCheckbox"] > label {
-        width: fit-content !important;
-        margin-right: -15px !important; /* Pulls the next element closer */
+        margin-right: -15px !important;
     }
     </style>
     """, unsafe_allow_html=True)
