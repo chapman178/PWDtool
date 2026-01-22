@@ -3,42 +3,45 @@ import pandas as pd
 from github import Github, Auth
 import io
 
+
+st.markdown("""
+    <style>
+    /* 1. Reduce the gap between columns */
+    [data-testid="column"] {
+        width: min-content !important;
+        flex-basis: auto !important;
+        min-width: 0px !important;
+    }
+    
+    /* 2. Shrink the gap between elements (checkboxes/inputs) */
+    [data-testid="stVerticalBlock"] > div {
+        gap: 0.2rem !important;
+    }
+
+    /* 3. Remove padding from the main container */
+    .block-container {
+        padding-top: 1rem !important;
+        padding-bottom: 0rem !important;
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+    }
+
+    /* 4. Force Checkboxes to occupy almost zero extra width */
+    [data-testid="stCheckbox"] {
+        width: fit-content !important;
+    }
+    [data-testid="stCheckbox"] > label {
+        width: fit-content !important;
+        margin-right: -15px !important; /* Pulls the next element closer */
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
 # Set up the page
-st.set_page_config(page_title="PWD Tool", layout="wide")
+st.set_page_config(page_title="PWD Tool", layout="centered")
 st.title("Pinewood Derby, Pack 159")
 
-# st.markdown("""
-#     <style>
-#     /* 1. Reduce the gap between columns */
-#     [data-testid="column"] {
-#         width: min-content !important;
-#         flex-basis: auto !important;
-#         min-width: 0px !important;
-#     }
-    
-#     /* 2. Shrink the gap between elements (checkboxes/inputs) */
-#     [data-testid="stVerticalBlock"] > div {
-#         gap: 0.2rem !important;
-#     }
 
-#     /* 3. Remove padding from the main container */
-#     .block-container {
-#         padding-top: 1rem !important;
-#         padding-bottom: 0rem !important;
-#         padding-left: 0.5rem !important;
-#         padding-right: 0.5rem !important;
-#     }
-
-#     /* 4. Force Checkboxes to occupy almost zero extra width */
-#     [data-testid="stCheckbox"] {
-#         width: fit-content !important;
-#     }
-#     [data-testid="stCheckbox"] > label {
-#         width: fit-content !important;
-#         margin-right: -15px !important; /* Pulls the next element closer */
-#     }
-#     </style>
-#     """, unsafe_allow_html=True)
 
 
 
@@ -128,7 +131,7 @@ if "Loss_L4" not in st.session_state:
 df, file_sha = load_github_data()
 
 st.subheader(" Lanes ")
-lane_btn1, lane_btn2 = st.columns([1,1], gap = 'xxsmall' ,vertical_alignment = 'center')
+lane_btn1, lane_btn2, lane_bogus = st.columns([1,1,4], gap = 'xxsmall' ,vertical_alignment = 'center')
 with lane_btn1:
     if st.button ("SetLanes"):
         # load_racers()
@@ -175,7 +178,7 @@ with lane_btn2:
 
 
 
-lca1, lcb1, lcc1 = st.columns([1,1,1], gap = 'xxsmall' ,vertical_alignment = 'center')
+lca1, lcb1, lcc1, bogus1 = st.columns([1,1,1,5], gap = 'xxsmall' ,vertical_alignment = 'center')
 with lca1:
     st.checkbox ("L1_EN", key = "Ln1_EN")
 with lcb1:
@@ -183,7 +186,7 @@ with lcb1:
 with lcc1:
     st.checkbox ("Ln1_loss", key='Loss_L1')
 
-lca2, lcb2, lcc2 = st.columns(3, gap = 'small' ,vertical_alignment = 'center')
+lca2, lcb2, lcc2, bogus2 = st.columns([1,1,1,5], gap = 'small' ,vertical_alignment = 'center')
 with lca2:
     st.checkbox ("L2_EN", key = "Ln2_EN")
 with lcb2:
@@ -191,7 +194,7 @@ with lcb2:
 with lcc2:
     st.checkbox ("Ln2_loss", key='Loss_L2') 
 
-lca3, lcb3, lcc3 = st.columns(3, gap = 'small' ,vertical_alignment = 'center')
+lca3, lcb3, lcc3, bogus3 = st.columns([1,1,1,5], gap = 'small' ,vertical_alignment = 'center')
 with lca3:
     st.checkbox ("L3_EN", key = "Ln3_EN")
 with lcb3:
@@ -199,7 +202,7 @@ with lcb3:
 with lcc3:
     st.checkbox ("Ln3_loss", key='Loss_L3')
 
-lca4, lcb4, lcc4 = st.columns(3, gap = 'small' ,vertical_alignment = 'center')
+lca4, lcb4, lcc4, bogus4 = st.columns([1,1,1,5], gap = 'small' ,vertical_alignment = 'center')
 with lca4:
     st.checkbox ("L4_EN", key = "Ln4_EN")
 with lcb4:
