@@ -4,8 +4,43 @@ from github import Github, Auth
 import io
 
 # Set up the page
-st.set_page_config(page_title="PWD Tool", layout="centered")
+st.set_page_config(page_title="PWD Tool", layout="wide")
 st.title("Pinewood Derby, Pack 159")
+
+# st.markdown("""
+#     <style>
+#     /* 1. Reduce the gap between columns */
+#     [data-testid="column"] {
+#         width: min-content !important;
+#         flex-basis: auto !important;
+#         min-width: 0px !important;
+#     }
+    
+#     /* 2. Shrink the gap between elements (checkboxes/inputs) */
+#     [data-testid="stVerticalBlock"] > div {
+#         gap: 0.2rem !important;
+#     }
+
+#     /* 3. Remove padding from the main container */
+#     .block-container {
+#         padding-top: 1rem !important;
+#         padding-bottom: 0rem !important;
+#         padding-left: 0.5rem !important;
+#         padding-right: 0.5rem !important;
+#     }
+
+#     /* 4. Force Checkboxes to occupy almost zero extra width */
+#     [data-testid="stCheckbox"] {
+#         width: fit-content !important;
+#     }
+#     [data-testid="stCheckbox"] > label {
+#         width: fit-content !important;
+#         margin-right: -15px !important; /* Pulls the next element closer */
+#     }
+#     </style>
+#     """, unsafe_allow_html=True)
+
+
 
 # 1. Configuration from Secrets
 try:
@@ -93,9 +128,9 @@ if "Loss_L4" not in st.session_state:
 df, file_sha = load_github_data()
 
 st.subheader(" Lanes ")
-lane_btn1, lane_btn2 = st.columns(2, gap = 'small' ,vertical_alignment = 'center')
+lane_btn1, lane_btn2 = st.columns([1,1], gap = 'xxsmall' ,vertical_alignment = 'center')
 with lane_btn1:
-    if st.button ("Set Lanes"):
+    if st.button ("SetLanes"):
         # load_racers()
         random_id = df["ID"].sample().iloc[0]
         st.session_state.L1_car = str(random_id)
@@ -106,7 +141,7 @@ with lane_btn1:
         random_id = df["ID"].sample().iloc[0]
         st.session_state.L4_car = str(random_id)
 with lane_btn2:
-    if st.button ("Complete Race"):
+    if st.button ("RaceDone"):
 
         race_results = [
         (st.session_state.L1_car, st.session_state.Loss_L1),
@@ -140,7 +175,7 @@ with lane_btn2:
 
 
 
-lca1, lcb1, lcc1 = st.columns(3, gap = 'small' ,vertical_alignment = 'center')
+lca1, lcb1, lcc1 = st.columns([1,1,1], gap = 'xxsmall' ,vertical_alignment = 'center')
 with lca1:
     st.checkbox ("L1_EN", key = "Ln1_EN")
 with lcb1:
