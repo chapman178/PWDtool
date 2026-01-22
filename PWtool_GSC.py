@@ -4,47 +4,77 @@ from github import Github, Auth
 import io
 
 
+# st.markdown("""
+#     <style>
+#     /* 1. Force Horizontal Layout */
+#     [data-testid="stHorizontalBlock"] {
+#         display: flex !important;
+#         flex-direction: row !important;
+#         flex-wrap: nowrap !important;
+#         align-items: center !important;
+#         gap: 0.1rem !important;
+#     }
+
+#     /* 2. Target specific columns by their weight */
+#     /* This targets the skinny columns (Checkboxes) */
+#     [data-testid="column"]:has(input[type="checkbox"]) {
+#         flex: 0 0 auto !important;
+#         width: 35px !important; /* Forces the column to be exactly this wide */
+#     }
+
+#     /* This targets the wider columns (Text Inputs) */
+#     [data-testid="column"]:has(div[data-testid="stTextInput"]) {
+#         flex: 1 1 auto !important; /* Takes up all remaining space */
+#     }
+
+#     /* 3. Remove internal padding from checkboxes */
+#     [data-testid="stCheckbox"] {
+#         width: 35px !important;
+#     }
+    
+#     [data-testid="stCheckbox"] > label {
+#         margin-right: -25px !important; /* Pulls the next column in closer */
+#     }
+
+#     /* 4. Shrink the text input padding to save more pixels */
+#     .stTextInput > div > div > input {
+#         padding: 5px !important;
+#     }
+#     </style>
+#     """, unsafe_allow_html=True)
 st.markdown("""
     <style>
-    /* 1. Force Horizontal Layout */
+    /* 1. Force the page to use all horizontal space */
+    .block-container { padding: 1rem 0.5rem !important; }
+
+    /* 2. Force Lanes to stay horizontal on mobile */
     [data-testid="stHorizontalBlock"] {
         display: flex !important;
         flex-direction: row !important;
         flex-wrap: nowrap !important;
         align-items: center !important;
-        gap: 0.1rem !important;
+        gap: 0.2rem !important;
     }
 
-    /* 2. Target specific columns by their weight */
-    /* This targets the skinny columns (Checkboxes) */
+    /* 3. Make Checkbox columns shrink to fit only the box */
     [data-testid="column"]:has(input[type="checkbox"]) {
-        flex: 0 0 auto !important;
-        width: 35px !important; /* Forces the column to be exactly this wide */
+        flex: 0 0 35px !important;
+        min-width: 35px !important;
     }
 
-    /* This targets the wider columns (Text Inputs) */
+    /* 4. Make Text Input columns take the remaining space */
     [data-testid="column"]:has(div[data-testid="stTextInput"]) {
-        flex: 1 1 auto !important; /* Takes up all remaining space */
+        flex: 1 1 auto !important;
+        min-width: 0px !important;
     }
 
-    /* 3. Remove internal padding from checkboxes */
-    [data-testid="stCheckbox"] {
-        width: 35px !important;
-    }
-    
-    [data-testid="stCheckbox"] > label {
-        margin-right: -25px !important; /* Pulls the next column in closer */
-    }
-
-    /* 4. Shrink the text input padding to save more pixels */
-    .stTextInput > div > div > input {
-        padding: 5px !important;
-    }
+    /* 5. Clean up the 'ghost' space after checkboxes */
+    [data-testid="stCheckbox"] label { display: none !important; }
     </style>
     """, unsafe_allow_html=True)
 
 # Set up the page
-st.set_page_config(page_title="PWD Tool", layout="centered")
+st.set_page_config(page_title="PWD Tool", layout="wide")
 st.title("Pinewood Derby, Pack 159")
 
 
@@ -185,12 +215,15 @@ with lane_btn2:
 
 
 lca1, lcb1, lcc1, bog1 = st.columns([1,1,1,5], gap = 'xxsmall' ,vertical_alignment = 'center')
+lca1.caption("Lane_EN")
+lcb1.caption("CAR ID")
+lcc1.caption("LOSS")
 with lca1:
-    st.checkbox ("L1_EN", key = "Ln1_EN")
+    st.checkbox ("L1_EN", key = "Ln1_EN", label_visibility='collapsed')
 with lcb1:
     st.text_input( "Lane 1", key="L1_car", label_visibility='collapsed', disabled=False)
 with lcc1:
-    st.checkbox ("Ln1_loss", key='Loss_L1')
+    st.checkbox ("Ln1_loss", key='Loss_L1', label_visibility='collapsed')
 
 lca2, lcb2, lcc2, bog2 = st.columns([1,1,1,5], gap = 'small' ,vertical_alignment = 'center')
 with lca2:
