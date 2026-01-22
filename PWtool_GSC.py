@@ -36,7 +36,7 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # Set up the page
-st.set_page_config(page_title="PWD Tool", layout="wide")
+st.set_page_config(page_title="PWD Tool", layout="centered")
 st.title("Pinewood Derby, Pack 159")
 
 
