@@ -47,50 +47,50 @@ import io
 # Set up the page
 st.set_page_config(page_title="PWD Tool", layout="wide")
 
-st.markdown("""
-    <style>
-    /* Force columns to stay horizontal on mobile */
-    [data-testid="stHorizontalBlock"] {
-        display: flex !important;
-        flex-direction: row !important;
-        flex-wrap: nowrap !important;
-        align-items: center !important;
-        gap: 0.5rem !important;
-    }
+# st.markdown("""
+#     <style>
+#     /* Force columns to stay horizontal on mobile */
+#     [data-testid="stHorizontalBlock"] {
+#         display: flex !important;
+#         flex-direction: row !important;
+#         flex-wrap: nowrap !important;
+#         align-items: center !important;
+#         gap: 0.5rem !important;
+#     }
 
-    /* Set specific widths for the lane columns */
-    /* This targets the 1st and 3rd columns in the lane rows */
-    [data-testid="column"]:nth-of-type(1), 
-    [data-testid="column"]:nth-of-type(3) {
-        min-width: 40px !important;
-        max-width: 60px !important;
-        flex: 0 0 auto !important;
-    }
+#     /* Set specific widths for the lane columns */
+#     /* This targets the 1st and 3rd columns in the lane rows */
+#     [data-testid="column"]:nth-of-type(1), 
+#     [data-testid="column"]:nth-of-type(3) {
+#         min-width: 40px !important;
+#         max-width: 60px !important;
+#         flex: 0 0 auto !important;
+#     }
 
-    /* This targets the middle column (The Text Input) */
-    [data-testid="column"]:nth-of-type(2) {
-        flex: 1 1 auto !important;
-        min-width: 0px !important;
-    }
+#     /* This targets the middle column (The Text Input) */
+#     [data-testid="column"]:nth-of-type(2) {
+#         flex: 1 1 auto !important;
+#         min-width: 0px !important;
+#     }
 
-    /* Fix the disappearance on PC: Ensure checkbox container has width */
-    .stCheckbox {
-        width: 100% !important;
-        display: flex !important;
-        justify-content: center !important;
-    }
+#     /* Fix the disappearance on PC: Ensure checkbox container has width */
+#     .stCheckbox {
+#         width: 100% !important;
+#         display: flex !important;
+#         justify-content: center !important;
+#     }
     
-    # /* Hide the 'ghost' labels to pull elements closer */
-    # .stCheckbox label span {
-    #     display: none !important;
-    # }
+#     # /* Hide the 'ghost' labels to pull elements closer */
+#     # .stCheckbox label span {
+#     #     display: none !important;
+#     # }
     
-    /* Shrink the padding inside text inputs for mobile */
-    .stTextInput input {
-        padding: 8px !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
+#     /* Shrink the padding inside text inputs for mobile */
+#     .stTextInput input {
+#         padding: 8px !important;
+#     }
+#     </style>
+#     """, unsafe_allow_html=True)
 
 st.title("Pinewood Derby, Pack 159")
 
@@ -164,6 +164,10 @@ if "Loss_L3" not in st.session_state:
     st.session_state.Loss_L3 = False
 if "Loss_L4" not in st.session_state:
     st.session_state.Loss_L4 = False
+
+if "Den4add" not in st.session_state:
+    st.session_state.Den4add = "Lion"
+
 
 # def load_racers(df, ChosenDen):
 #     if ChosenDen == 'All':
@@ -374,7 +378,7 @@ with tab1:
     with st.form("add_form", clear_on_submit=True):
         new_id = st.text_input("New ID")
         new_name = st.text_input("Name")
-        new_cat = st.selectbox("Den", Dens)
+        new_cat = st.radio("Den", options=Dens, horizontal=True, key="Den4add")
         
         # You can add default values for your L1, L2 fields here
         if st.form_submit_button("Add to List"):
@@ -391,7 +395,7 @@ with tab1:
                     "L3": 0,
                     "L4": 0
                 }])
-                
+
                 # Combine and save
                 updated_df = pd.concat([df, new_row], ignore_index=True)
                 save_to_github(updated_df)
