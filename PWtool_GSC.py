@@ -45,7 +45,7 @@ import io
 
 
 # Set up the page
-st.set_page_config(page_title="PWD Tool", layout="wide")
+st.set_page_config(page_title="PWD Tool", layout="centered")
 
 # st.markdown("""
 #     <style>
@@ -188,6 +188,11 @@ if "Den4add" not in st.session_state:
 df, file_sha = load_github_data()
 
 st.subheader(" Lanes ")
+st.checkbox ("L1_EN", key = "Ln1_EN")
+st.checkbox ("L2_EN", key = "Ln2_EN")
+st.checkbox ("L3_EN", key = "Ln3_EN")
+st.checkbox ("L4_EN", key = "Ln4_EN")
+
 lane_btn1, lane_btn2, lane_bogus = st.columns([1,1,4], gap = 'xxsmall' ,vertical_alignment = 'center')
 with lane_btn1:
     if st.button ("SetLanes"):
@@ -233,40 +238,53 @@ with lane_btn2:
         st.session_state.L4_car = str(random_id)
         save_to_github(df)
 
-lca1, lcb1, lcc1, bog1 = st.columns([1,1,1,5], gap = "xxsmall" ,vertical_alignment = 'center')
-lca1.caption("Lane_EN")
-lcb1.caption("CAR ID")
-lcc1.caption("LOSS")
-with lca1:
-    st.checkbox ("L1_EN", key = "Ln1_EN", label_visibility='collapsed')
-with lcb1:
-    st.text_input( "Lane 1", key="L1_car", label_visibility='collapsed', disabled=False)
-with lcc1:
-    st.checkbox ("Ln1_loss", key='Loss_L1', label_visibility='collapsed')
+# lca1, lcb1, lcc1 = st.columns([1,1,1], gap = "xxsmall" ,vertical_alignment = 'center')
+# lca1.caption("Lane_EN")
+# lcb1.caption("CAR ID")
+# lcc1.caption("LOSS")
+# with lca1:
+#     st.checkbox ("L1_EN", key = "Ln1_EN")
+# with lcb1:
+#     st.text_input( "Lane 1", key="L1_car", label_visibility='collapsed', disabled=False)
+# with lcc1:
+#     st.checkbox ("Ln1_loss", key='Loss_L1')
 
-lca2, lcb2, lcc2, bog2 = st.columns([1,1,1,5], gap = 'small' ,vertical_alignment = 'center')
-with lca2:
-    st.checkbox ("L2_EN", key = "Ln2_EN", label_visibility='collapsed')
-with lcb2:
-    st.text_input( "Lane 2", key="L2_car", label_visibility='collapsed', disabled=False)  
-with lcc2:
-    st.checkbox ("Ln2_loss", key='Loss_L2', label_visibility='collapsed') 
+# lca2, lcb2, lcc2 = st.columns([1,1,1], gap = 'small' ,vertical_alignment = 'center')
+# with lca2:
+#     st.checkbox ("L2_EN", key = "Ln2_EN")
+# with lcb2:
+#     st.text_input( "Lane 2", key="L2_car", label_visibility='collapsed', disabled=False)  
+# with lcc2:
+#     st.checkbox ("Ln2_loss", key='Loss_L2') 
 
-lca3, lcb3, lcc3, bog3 = st.columns([1,1,1,5], gap = 'small' ,vertical_alignment = 'center')
-with lca3:
-    st.checkbox ("L3_EN", key = "Ln3_EN", label_visibility='collapsed')
-with lcb3:
-    st.text_input( "Lane 3", key="L3_car", label_visibility='collapsed', disabled=False)
-with lcc3:
-    st.checkbox ("Ln3_loss", key='Loss_L3', label_visibility='collapsed')
+# lca3, lcb3, lcc3 = st.columns([1,1,1], gap = 'small' ,vertical_alignment = 'center')
+# with lca3:
+#     st.checkbox ("L3_EN", key = "Ln3_EN")
+# with lcb3:
+#     st.text_input( "Lane 3", key="L3_car", label_visibility='collapsed', disabled=False)
+# with lcc3:
+#     st.checkbox ("Ln3_loss", key='Loss_L3')
 
-lca4, lcb4, lcc4, bog4 = st.columns([1,1,1,5], gap = 'small' ,vertical_alignment = 'center')
-with lca4:
-    st.checkbox ("L4_EN", key = "Ln4_EN", label_visibility='collapsed')
-with lcb4:
-    st.text_input( "Lane 4", key="L4_car", label_visibility='collapsed', disabled=False)
-with lcc4:
-    st.checkbox ("Ln4_loss", key='Loss_L4', label_visibility='collapsed')
+# lca4, lcb4, lcc4 = st.columns([1,1,1], gap = 'small' ,vertical_alignment = 'center')
+# with lca4:
+#     st.checkbox ("L4_EN", key = "Ln4_EN")
+# with lcb4:
+#     st.text_input( "Lane 4", key="L4_car", label_visibility='collapsed', disabled=False)
+# with lcc4:
+#     st.checkbox ("Ln4_loss", key='Loss_L4')
+
+st.text_input( "Lane 1", key="L1_car", label_visibility='collapsed', disabled=False)
+st.text_input( "Lane 2", key="L2_car", label_visibility='collapsed', disabled=False)
+st.text_input( "Lane 3", key="L3_car", label_visibility='collapsed', disabled=False)
+st.text_input( "Lane 4", key="L4_car", label_visibility='collapsed', disabled=False)
+
+st.checkbox ("Ln1_loss", key='Loss_L1')
+st.checkbox ("Ln2_loss", key='Loss_L2')
+st.checkbox ("Ln3_loss", key='Loss_L3')
+st.checkbox ("Ln4_loss", key='Loss_L4')
+
+
+
 
 
 print(st.session_state.ChosenDen)
