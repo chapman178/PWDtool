@@ -76,12 +76,14 @@ st.markdown("""
     /* Fix the disappearance on PC: Ensure checkbox container has width */
     .stCheckbox {
         width: 100% !important;
+        display: flex !important;
+        justify-content: center !important;
     }
     
-    /* Hide the 'ghost' labels to pull elements closer */
-    .stCheckbox label span {
-        display: none !important;
-    }
+    # /* Hide the 'ghost' labels to pull elements closer */
+    # .stCheckbox label span {
+    #     display: none !important;
+    # }
     
     /* Shrink the padding inside text inputs for mobile */
     .stTextInput input {
@@ -227,9 +229,7 @@ with lane_btn2:
         st.session_state.L4_car = str(random_id)
         save_to_github(df)
 
-
-
-lca1, lcb1, lcc1, bog1 = st.columns([1,1,1,5], gap = 'xxsmall' ,vertical_alignment = 'center')
+lca1, lcb1, lcc1, bog1 = st.columns([1,1,1,5], gap = "xxsmall" ,vertical_alignment = 'center')
 lca1.caption("Lane_EN")
 lcb1.caption("CAR ID")
 lcc1.caption("LOSS")
@@ -242,27 +242,27 @@ with lcc1:
 
 lca2, lcb2, lcc2, bog2 = st.columns([1,1,1,5], gap = 'small' ,vertical_alignment = 'center')
 with lca2:
-    st.checkbox ("L2_EN", key = "Ln2_EN")
+    st.checkbox ("L2_EN", key = "Ln2_EN", label_visibility='collapsed')
 with lcb2:
     st.text_input( "Lane 2", key="L2_car", label_visibility='collapsed', disabled=False)  
 with lcc2:
-    st.checkbox ("Ln2_loss", key='Loss_L2') 
+    st.checkbox ("Ln2_loss", key='Loss_L2', label_visibility='collapsed') 
 
 lca3, lcb3, lcc3, bog3 = st.columns([1,1,1,5], gap = 'small' ,vertical_alignment = 'center')
 with lca3:
-    st.checkbox ("L3_EN", key = "Ln3_EN")
+    st.checkbox ("L3_EN", key = "Ln3_EN", label_visibility='collapsed')
 with lcb3:
     st.text_input( "Lane 3", key="L3_car", label_visibility='collapsed', disabled=False)
 with lcc3:
-    st.checkbox ("Ln3_loss", key='Loss_L3')
+    st.checkbox ("Ln3_loss", key='Loss_L3', label_visibility='collapsed')
 
 lca4, lcb4, lcc4, bog4 = st.columns([1,1,1,5], gap = 'small' ,vertical_alignment = 'center')
 with lca4:
-    st.checkbox ("L4_EN", key = "Ln4_EN")
+    st.checkbox ("L4_EN", key = "Ln4_EN", label_visibility='collapsed')
 with lcb4:
     st.text_input( "Lane 4", key="L4_car", label_visibility='collapsed', disabled=False)
 with lcc4:
-    st.checkbox ("Ln4_loss", key='Loss_L4')
+    st.checkbox ("Ln4_loss", key='Loss_L4', label_visibility='collapsed')
 
 
 print(st.session_state.ChosenDen)
@@ -275,7 +275,14 @@ dd1, dd2 = st.columns(2)
 
 with dd1:
     unique_vals = ['All', 'Lion', 'Tiger', 'Wolf', 'Bear', 'Webelo', 'Arrow', 'Open']
-    selected_val = st.selectbox(f"Select Den", options=unique_vals, key="ChosenDen")
+    selected_val = choice = st.radio(
+        "Select Den:",
+        options=unique_vals,
+        horizontal=True,
+        key="ChosenDen"
+    )
+    
+    # selected_val = st.selectbox(f"Select Den", options=unique_vals, key="ChosenDen")
 with dd2:
     enable_view_lost = st.checkbox ("View Eliminated", value= False)
 
