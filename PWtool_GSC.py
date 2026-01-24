@@ -3,100 +3,10 @@ import pandas as pd
 from github import Github, Auth
 import io
 
-
-# st.markdown("""
-#     <style>
-#     /* 1. Force Horizontal Layout */
-#     [data-testid="stHorizontalBlock"] {
-#         display: flex !important;
-#         flex-direction: row !important;
-#         flex-wrap: nowrap !important;
-#         align-items: center !important;
-#         gap: 0.1rem !important;
-#     }
-
-#     /* 2. Target specific columns by their weight */
-#     /* This targets the skinny columns (Checkboxes) */
-#     [data-testid="column"]:has(input[type="checkbox"]) {
-#         flex: 0 0 auto !important;
-#         width: 35px !important; /* Forces the column to be exactly this wide */
-#     }
-
-#     /* This targets the wider columns (Text Inputs) */
-#     [data-testid="column"]:has(div[data-testid="stTextInput"]) {
-#         flex: 1 1 auto !important; /* Takes up all remaining space */
-#     }
-
-#     /* 3. Remove internal padding from checkboxes */
-#     [data-testid="stCheckbox"] {
-#         width: 35px !important;
-#     }
-    
-#     [data-testid="stCheckbox"] > label {
-#         margin-right: -25px !important; /* Pulls the next column in closer */
-#     }
-
-#     /* 4. Shrink the text input padding to save more pixels */
-#     .stTextInput > div > div > input {
-#         padding: 5px !important;
-#     }
-#     </style>
-#     """, unsafe_allow_html=True)
-
-
 # Set up the page
 st.set_page_config(page_title="PWD Tool", layout="centered")
 
-# st.markdown("""
-#     <style>
-#     /* Force columns to stay horizontal on mobile */
-#     [data-testid="stHorizontalBlock"] {
-#         display: flex !important;
-#         flex-direction: row !important;
-#         flex-wrap: nowrap !important;
-#         align-items: center !important;
-#         gap: 0.5rem !important;
-#     }
-
-#     /* Set specific widths for the lane columns */
-#     /* This targets the 1st and 3rd columns in the lane rows */
-#     [data-testid="column"]:nth-of-type(1), 
-#     [data-testid="column"]:nth-of-type(3) {
-#         min-width: 40px !important;
-#         max-width: 60px !important;
-#         flex: 0 0 auto !important;
-#     }
-
-#     /* This targets the middle column (The Text Input) */
-#     [data-testid="column"]:nth-of-type(2) {
-#         flex: 1 1 auto !important;
-#         min-width: 0px !important;
-#     }
-
-#     /* Fix the disappearance on PC: Ensure checkbox container has width */
-#     .stCheckbox {
-#         width: 100% !important;
-#         display: flex !important;
-#         justify-content: center !important;
-#     }
-    
-#     # /* Hide the 'ghost' labels to pull elements closer */
-#     # .stCheckbox label span {
-#     #     display: none !important;
-#     # }
-    
-#     /* Shrink the padding inside text inputs for mobile */
-#     .stTextInput input {
-#         padding: 8px !important;
-#     }
-#     </style>
-#     """, unsafe_allow_html=True)
-
 st.title("Pinewood Derby, Pack 159")
-
-
-
-
 
 # 1. Configuration from Secrets
 try:
@@ -133,7 +43,7 @@ def save_to_github(updated_df, commit_message="Data updated via App"):
         )
         st.cache_data.clear() # Reset cache to see new data
         st.success("GitHub Updated!")
-        st.rerun()
+        # st.rerun()
 
 if "ChosenDen" not in st.session_state:
     st.session_state.ChosenDen = "All"
@@ -147,14 +57,14 @@ if "L3_car" not in st.session_state:
 if "L4_car" not in st.session_state:
     st.session_state.L4_car = "000"
 
-if "Ln1_EN" not in st.session_state:
-    st.session_state.Ln1_EN = True
-if "Ln2_EN" not in st.session_state:
-    st.session_state.Ln2_EN = True
+if "L1_EN" not in st.session_state:
+    st.session_state.L1_EN = True
+if "L2_EN" not in st.session_state:
+    st.session_state.L2_EN = True
 if "L3_EN" not in st.session_state:
-    st.session_state.Ln3_EN = True
-if "Ln4_EN" not in st.session_state:
-    st.session_state.Ln4_EN = True
+    st.session_state.L3_EN = True
+if "L4_EN" not in st.session_state:
+    st.session_state.L4_EN = True
 
 if "Loss_L1" not in st.session_state:
     st.session_state.Loss_L1 = False
@@ -169,125 +79,138 @@ if "Den4add" not in st.session_state:
     st.session_state.Den4add = "Lion"
 
 
-# def load_racers(df, ChosenDen):
-#     if ChosenDen == 'All':
-#         den_df = df
-#     else:
-#         den_df = df[df['Den']==ChosenDen]
-#     active_df = den_df[den_df['Losses'] < 3]
+def load_racers(df):
+    # 1. Filter data
+    if st.session_state.ChosenDen == 'All':
+        den_df = df
+    else:
+        den_df = df[df['Den'] == st.session_state.ChosenDen]
+    
+    active_df = den_df[den_df['Losses'] < 3].copy()
+    num_cars_available = len(active_df)
 
-#     # if number of active cars is less than number of active lanes adjust number of lanes
-#     rws, cols = active_df.shape
-#     if rws <=1:
-#         st.write('There is a winner, add more cars!')
-#         return
-#     number_of_active_lanes = st.session_state.L1_EN + st.session_state.L2_EN + st.session_state.L3_EN + st.session_state.L4_EN
-#     print(number_of_active_lanes)
+    if num_cars_available <= 1:
+        st.error('There is a winner, add more cars!')
+        return
+    
+    # 2. Adjust active lanes based on car count
+    lane_keys = ["L1_EN", "L2_EN", "L3_EN", "L4_EN"]
+    current_checked_lanes = sum([st.session_state[k] for k in lane_keys])
+    
+    if current_checked_lanes > num_cars_available:
+        for key in reversed(lane_keys):
+            if st.session_state[key]:
+                st.session_state[key] = False
+                current_checked_lanes -= 1
+            if current_checked_lanes <= num_cars_available:
+                break
+
+    # 3. Select the pool of cars for this heat
+    # First, get cars with the absolute minimum number of total races
+    min_races = active_df['Races'].min()
+    pool_df = active_df[active_df['Races'] == min_races]
+    
+    if len(pool_df) >= current_checked_lanes:
+        cars_to_race_df = pool_df.sample(current_checked_lanes)
+    else:
+        # If not enough "minimum race" cars, grab others and sample to fill the gap
+        others_df = active_df[active_df['Races'] > min_races]
+        fill_needed = current_checked_lanes - len(pool_df)
+        fill_df = others_df.sample(fill_needed)
+        cars_to_race_df = pd.concat([pool_df, fill_df], ignore_index=True)
+
+    # 4. Assign to lanes (Prioritizing car with fewest runs in THAT specific lane)
+    # We use a temporary list to track who is already assigned
+    for lane_num in range(1, 5):
+        en_key = f"L{lane_num}_EN"
+        car_key = f"L{lane_num}_car"
+        lane_col = f"L{lane_num}" # Assumes columns L1, L2, L3, L4 exist in your CSV
+        
+        if st.session_state[en_key] and not cars_to_race_df.empty:
+            # Sort the remaining pool by who has used THIS lane the least
+            cars_to_race_df = cars_to_race_df.sort_values(by=lane_col, ascending=True)
+            
+            # Pick the top car
+            picked_car = cars_to_race_df.iloc[0]
+            st.session_state[car_key] = str(picked_car["ID"])
+            
+            # Remove them from the pool for the next lane assignment in this heat
+            cars_to_race_df = cars_to_race_df.iloc[1:]
+        else:
+            st.session_state[car_key] = "000"
+
+def finish_race(df): 
+    race_results = [
+        (st.session_state.L1_car, st.session_state.Loss_L1, "L1"),
+        (st.session_state.L2_car, st.session_state.Loss_L2, "L2"),
+        (st.session_state.L3_car, st.session_state.Loss_L3, "L3"),
+        (st.session_state.L4_car, st.session_state.Loss_L4, "L4")
+    ]
+
+    for car_id, is_loss, lane_col in race_results:
+        if car_id == "000":
+            continue
+        matching_rows = df[df["ID"].astype(str) == str(car_id)].index
+
+        if not matching_rows.empty:
+            idx = matching_rows[0]
+            # Always increment 'Races' count
+            df.at[idx, "Races"] += 1
+            # 2. Increment the specific lane (L1, L2, L3, or L4)
+            df.at[idx, lane_col] += 1
+            # Only increment 'Losses' if the checkbox was checked
+            if is_loss:
+                df.at[idx, "Losses"] += 1  
+
+    st.session_state.Loss_L1 = False
+    st.session_state.Loss_L2 = False
+    st.session_state.Loss_L3 = False
+    st.session_state.Loss_L4 = False 
+    return df
+
+def handle_finish_race_logic(current_df):
+    updated_df = finish_race(current_df)
+    save_to_github(updated_df)
+    load_racers(updated_df)
+
+
 
 # Initial Load
 df, file_sha = load_github_data()
 
+
+# Ensure lane-tracking columns exist so we don't get KeyErrors
+for col in ["L1", "L2", "L3", "L4", "Races", "Losses"]:
+    if col not in df.columns:
+        df[col] = 0
+
 st.subheader(" Lanes ")
-st.checkbox ("L1_EN", key = "Ln1_EN")
-st.checkbox ("L2_EN", key = "Ln2_EN")
-st.checkbox ("L3_EN", key = "Ln3_EN")
-st.checkbox ("L4_EN", key = "Ln4_EN")
+st.checkbox ("Lane1 active", key = "L1_EN")
+st.checkbox ("Lane2 active", key = "L2_EN")
+st.checkbox ("Lane3 active", key = "L3_EN")
+st.checkbox ("Lane4 active", key = "L4_EN")
 
-lane_btn1, lane_btn2, lane_bogus = st.columns([1,1,4], gap = 'xxsmall' ,vertical_alignment = 'center')
+lane_btn1, lane_btn2 = st.columns([1,1], gap = 'xxsmall' ,vertical_alignment = 'center')
 with lane_btn1:
-    if st.button ("SetLanes"):
-        # load_racers()
-        random_id = df["ID"].sample().iloc[0]
-        st.session_state.L1_car = str(random_id)
-        random_id = df["ID"].sample().iloc[0]
-        st.session_state.L2_car = str(random_id)
-        random_id = df["ID"].sample().iloc[0]
-        st.session_state.L3_car = str(random_id)
-        random_id = df["ID"].sample().iloc[0]
-        st.session_state.L4_car = str(random_id)
+    st.button ("SetLanes", on_click=load_racers, args=(df,))
+
 with lane_btn2:
-    if st.button ("RaceDone"):
-
-        race_results = [
-        (st.session_state.L1_car, st.session_state.Loss_L1),
-            (st.session_state.L2_car, st.session_state.Loss_L2),
-            (st.session_state.L3_car, st.session_state.Loss_L3),
-            (st.session_state.L4_car, st.session_state.Loss_L4)
-        ]
-
-        for car_id, is_loss in race_results:
-            if car_id == "000":
-                continue
-            matching_rows = df[df["ID"].astype(str) == str(car_id)].index
-
-            if not matching_rows.empty:
-                idx = matching_rows[0]
-                # Always increment 'Races' count
-                df.at[idx, "Races"] += 1
-                # Only increment 'Losses' if the checkbox was checked
-                if is_loss:
-                    df.at[idx, "Losses"] += 1
-
-        random_id = df["ID"].sample().iloc[0]
-        st.session_state.L1_car = str(random_id)
-        random_id = df["ID"].sample().iloc[0]
-        st.session_state.L2_car = str(random_id)
-        random_id = df["ID"].sample().iloc[0]
-        st.session_state.L3_car = str(random_id)
-        random_id = df["ID"].sample().iloc[0]
-        st.session_state.L4_car = str(random_id)
-        save_to_github(df)
-
-# lca1, lcb1, lcc1 = st.columns([1,1,1], gap = "xxsmall" ,vertical_alignment = 'center')
-# lca1.caption("Lane_EN")
-# lcb1.caption("CAR ID")
-# lcc1.caption("LOSS")
-# with lca1:
-#     st.checkbox ("L1_EN", key = "Ln1_EN")
-# with lcb1:
-#     st.text_input( "Lane 1", key="L1_car", label_visibility='collapsed', disabled=False)
-# with lcc1:
-#     st.checkbox ("Ln1_loss", key='Loss_L1')
-
-# lca2, lcb2, lcc2 = st.columns([1,1,1], gap = 'small' ,vertical_alignment = 'center')
-# with lca2:
-#     st.checkbox ("L2_EN", key = "Ln2_EN")
-# with lcb2:
-#     st.text_input( "Lane 2", key="L2_car", label_visibility='collapsed', disabled=False)  
-# with lcc2:
-#     st.checkbox ("Ln2_loss", key='Loss_L2') 
-
-# lca3, lcb3, lcc3 = st.columns([1,1,1], gap = 'small' ,vertical_alignment = 'center')
-# with lca3:
-#     st.checkbox ("L3_EN", key = "Ln3_EN")
-# with lcb3:
-#     st.text_input( "Lane 3", key="L3_car", label_visibility='collapsed', disabled=False)
-# with lcc3:
-#     st.checkbox ("Ln3_loss", key='Loss_L3')
-
-# lca4, lcb4, lcc4 = st.columns([1,1,1], gap = 'small' ,vertical_alignment = 'center')
-# with lca4:
-#     st.checkbox ("L4_EN", key = "Ln4_EN")
-# with lcb4:
-#     st.text_input( "Lane 4", key="L4_car", label_visibility='collapsed', disabled=False)
-# with lcc4:
-#     st.checkbox ("Ln4_loss", key='Loss_L4')
+    st.button("FinishRace", on_click=handle_finish_race_logic, args=(df,))
+    # if st.button ("FinishRace"):
+    #     df = finish_race(df)
+    #     save_to_github(df)
+    #     load_racers(df)
+        
 
 st.text_input( "Lane 1", key="L1_car", label_visibility='collapsed', disabled=False)
 st.text_input( "Lane 2", key="L2_car", label_visibility='collapsed', disabled=False)
 st.text_input( "Lane 3", key="L3_car", label_visibility='collapsed', disabled=False)
 st.text_input( "Lane 4", key="L4_car", label_visibility='collapsed', disabled=False)
 
-st.checkbox ("Ln1_loss", key='Loss_L1')
-st.checkbox ("Ln2_loss", key='Loss_L2')
-st.checkbox ("Ln3_loss", key='Loss_L3')
-st.checkbox ("Ln4_loss", key='Loss_L4')
-
-
-
-
-
-print(st.session_state.ChosenDen)
+st.checkbox ("Lane1 loss", key='Loss_L1')
+st.checkbox ("Lane2 loss", key='Loss_L2')
+st.checkbox ("Lane3 loss", key='Loss_L3')
+st.checkbox ("Lane4 loss", key='Loss_L4')
 
 st.divider()
 
@@ -297,10 +220,18 @@ dd1, dd2 = st.columns(2)
 
 with dd1:
     unique_vals = ['All', 'Lion', 'Tiger', 'Wolf', 'Bear', 'Webelo', 'Arrow', 'Open']
-    selected_val = choice = st.radio(
+    
+    # Calculate the index of the currently selected Den
+    if st.session_state.ChosenDen in unique_vals:
+        current_index = unique_vals.index(st.session_state.ChosenDen)
+    else:
+        current_index = 0
+
+    selected_val = st.radio(
         "Select Den:",
         options=unique_vals,
         horizontal=True,
+        index=current_index, # This keeps it "sticky"
         key="ChosenDen"
     )
     
@@ -346,7 +277,7 @@ else:
 
 # Identify target columns
 if selected_col == 'All':
-    target_cols = data_cols # This uses the list of real column names
+    target_cols = [c for c in df.columns if c in ["L1", "L2", "L3", "L4", "Races", "Losses"]]
 else:
     target_cols = [selected_col]
 
@@ -370,6 +301,7 @@ with btn1:
             for col in target_cols:
                 df.at[idx, col] += 1
         save_to_github(df)
+        st.rerun()
 
 with btn2:
     if st.button("➖ Decrease", use_container_width=True):
@@ -378,6 +310,7 @@ with btn2:
                 new_val = pd.to_numeric(df.at[idx, col]) -1
                 df.at[idx, col] = max(0, new_val)
         save_to_github(df)
+        st.rerun()
 
 with btn3:
     if st.button("Reset", use_container_width=True):
@@ -385,6 +318,7 @@ with btn3:
             for col in target_cols:
                 df.at[idx, col] = 0
         save_to_github(df)
+        st.rerun()
 
 st.divider()
 st.subheader("🛠️ Add/Remove Racers")
@@ -396,7 +330,17 @@ with tab1:
     with st.form("add_form", clear_on_submit=True):
         new_id = st.text_input("New ID")
         new_name = st.text_input("Name")
-        new_cat = st.radio("Den", options=Dens, horizontal=True, key="Den4add")
+
+        if st.session_state.Den4add in Dens:
+            current_den_index = Dens.index(st.session_state.Den4add)
+        else:
+            current_den_index = 0
+    
+        new_cat = st.radio("Den", 
+                options=Dens, 
+                horizontal=True,
+                index=current_den_index, 
+                key="Den4add")
         
         # You can add default values for your L1, L2 fields here
         if st.form_submit_button("Add to List"):
@@ -417,6 +361,7 @@ with tab1:
                 # Combine and save
                 updated_df = pd.concat([df, new_row], ignore_index=True)
                 save_to_github(updated_df)
+                st.rerun()
             else:
                 st.error("ID is either empty or already exists!")
 
