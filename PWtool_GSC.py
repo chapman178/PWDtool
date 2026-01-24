@@ -141,13 +141,13 @@ def load_racers(df):
 
 def finish_race(df): 
     race_results = [
-        (st.session_state.L1_car, st.session_state.Loss_L1, "L1"),
-        (st.session_state.L2_car, st.session_state.Loss_L2, "L2"),
-        (st.session_state.L3_car, st.session_state.Loss_L3, "L3"),
-        (st.session_state.L4_car, st.session_state.Loss_L4, "L4")
+        (st.session_state.L1_car, st.session_state.Loss_L1, "L1", "L1_Loss"),
+        (st.session_state.L2_car, st.session_state.Loss_L2, "L2", "L2_Loss"),
+        (st.session_state.L3_car, st.session_state.Loss_L3, "L3", "L3_Loss"),
+        (st.session_state.L4_car, st.session_state.Loss_L4, "L4", "L4_Loss")
     ]
 
-    for car_id, is_loss, lane_col in race_results:
+    for car_id, is_loss, lane_col, lane_loss in race_results:
         if car_id == "000":
             continue
         matching_rows = df[df["ID"].astype(str) == str(car_id)].index
@@ -160,7 +160,8 @@ def finish_race(df):
             df.at[idx, lane_col] += 1
             # Only increment 'Losses' if the checkbox was checked
             if is_loss:
-                df.at[idx, "Losses"] += 1  
+                df.at[idx, "Losses"] += 1
+                df.at[idx, lane_loss] += 1
 
     st.session_state.Loss_L1 = False
     st.session_state.Loss_L2 = False
@@ -178,9 +179,9 @@ def handle_finish_race_logic(current_df):
 # Initial Load
 df, file_sha = load_github_data()
 
-
-# Ensure lane-tracking columns exist so we don't get KeyErrors
-for col in ["L1", "L2", "L3", "L4", "Races", "Losses"]:
+for col in ["Losses", "Races", 
+            "L1", "L2", "L3", "L4",
+            "L1_Loss", "L2_Loss", "L3_Loss", "L4_Loss"]:
     if col not in df.columns:
         df[col] = 0
 
@@ -249,7 +250,8 @@ if enable_view_lost:
 else:
     display_df = den_df[den_df['Losses'] < 3]
 
-st.dataframe(display_df, width='stretch', hide_index=True)
+visible_columns = ["ID", "Name", "Den", "Races", "Losses", "L1", "L2", "L3", "L4"]
+st.dataframe(display_df, column_order=visible_columns, width='stretch', hide_index=True)
 
 st.divider()
 # 4. Update Logic
@@ -375,3 +377,33 @@ with tab2:
             save_to_github(updated_df)
         else:
             st.warning("Please select an ID first.")
+
+st.divider()
+st.subheader(" Lane Stats ")
+target_cols = [c for c in df.columns if c in ["L1_Loss", "L2_Loss", "L3_Loss", "L4_Loss"]]
+# Calculate the sums for all cars currently in the dataframe
+l1_total = df["L1_Loss"].sum()
+l2_total = df["L2_Loss"].sum()
+l3_total = df["L3_Loss"].sum()
+l4_total = df["L4_Loss"].sum()
+
+# Display them in 4 nice columns
+m1, m2, m3, m4 = st.columns(4)
+m1.metric("Lane 1", f"{l1_total} ❌")
+m2.metric("Lane 2", f"{l2_total} ❌")
+m3.metric("Lane 3", f"{l3_total} ❌")
+m4.metric("Lane 4", f"{l4_total} ❌")
+
+if st.button("Clear All Lane Loss Totals", type="primary", use_container_width=True):
+    # 1. Targeted columns to reset
+    loss_cols = ["L1_Loss", "L2_Loss", "L3_Loss", "L4_Loss"]
+    
+    # 2. Update every row in the dataframe to 0 for these columns
+    df[loss_cols] = 0
+    
+    # 3. Save the blanked-out data to GitHub
+    save_to_github(df, commit_message="Reset all lane loss statistics")
+    
+    st.warning("All lane loss columns have been reset to zero.")
+    st.rerun()
+    
