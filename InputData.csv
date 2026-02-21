@@ -1,9 +1,9 @@
 Name,ID,Den,Losses,Races,L1,L2,L3,L4,L1_Loss,L2_Loss,L3_Loss,L4_Loss
 Julian,400,Webelo,3,3,1,1,0,1,,,,
-Ian,401,Webelo,2,2,1,0,1,0,,,,
-Jack,402,Webelo,0,3,1,1,0,1,,,,
-Rowan,403,Webelo,0,3,1,1,1,0,,,,
-Grant,404,Webelo,1,3,0,1,1,1,,,,
+Ian,401,Webelo,3,3,1,1,1,0,,,,
+Jack,402,Webelo,0,4,1,1,1,1,,,,
+Rowan,403,Webelo,1,4,1,1,1,1,,,,
+Grant,404,Webelo,1,4,1,1,1,1,,,,
 Eliamo,405,Webelo,3,3,0,1,2,0,,,,
 Poppy,600,Open,0,0,0,0,0,0,,,,
 Sibella,601,Open,0,0,0,0,0,0,,,,
